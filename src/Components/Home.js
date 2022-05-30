@@ -1,19 +1,22 @@
+import { useContext } from "react"
 import styled from "styled-components"
-import Image from "../Images/UserImage.png"
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar"
 import 'react-circular-progressbar/dist/styles.css'
 import { Link } from "react-router-dom";
 import Input from "./Input";
 import Button from "./Button";
 import TasksWeek from "./TasksWeek";
+import UserContext from "../Context/UserContext"
 
 export default function Home(){
+    const {user} = useContext(UserContext)
+    console.log(user)
     const percentage = 34;
     return (
         <Container>
             <Header>
                 <h1>TrackIt</h1>
-                <img src={Image} alt="User" />
+                <img src={user.image} alt="User" />
             </Header>
             <SubHeader>
                 <h2>Meus hábitos</h2>

@@ -8,9 +8,9 @@ import Today from "./Today";
 import History from "./History";
 
 export default function App(){
-    const [userName, setUserName] = useState("")
+    const [user, setUser] = useState("")
     return (
-        <UserContext.Provider value={{userName, setUserName}}>
+        <UserContext.Provider value={{user, setUser}}>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Login/>}/>
