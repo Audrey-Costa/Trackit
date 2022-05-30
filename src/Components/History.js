@@ -1,26 +1,24 @@
 import styled from 'styled-components'
-import Image from '../Images/UserImage.png'
-import { Link } from 'react-router-dom'
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar"
-import 'react-circular-progressbar/dist/styles.css'
+import 'react-circular-progressbar/dist/styles.css';
+import { useContext, useState } from 'react';
+import UserContext from '../Context/UserContext';
+import Footer from './Footer';
+import TasksContext from '../Context/TasksContext';
 
 export default function History(){
-    const percentage = 42;
+    const {user} = useContext(UserContext);
+    const {percentage} = useContext(TasksContext)
     return (
         <Container>
             <Header>
                 <h1>TrackIt</h1>
-                <img src={Image} alt="User" />
+                <img src={user.image} alt="User" />
             </Header>
             <SubHeader>
                 <h2>Histórico</h2>
                 <p>Em breve você poderá ver o histórico dos seus hábitos aqui!</p>
             </SubHeader>
-            <Footer>
-                <Link style={{textDecoration: 'none'}} to={`/habitos`}><div>Hábitos</div></Link>
-                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={percentage} text={`Hoje`} background={true} backgroundPadding={6} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
-                <Link style={{textDecoration:'none'}} to={`/historico`}><div>Histórico</div></Link>
-            </Footer>
+            <Footer percentage={percentage}/>
         </Container>
     )
 }
@@ -80,38 +78,5 @@ const SubHeader = styled.span`
     
     p{
         margin: 20px 0px; 
-    }
-`
-const Footer = styled.div`
-    position: fixed;
-    left: 0px;
-    bottom: 0px;
-    width: 100%;
-    height: 70px;
-    background: #FFFFFF;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    div:nth-child(2n+1){
-        width: 80px;
-        height: 40px;
-        margin: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Lexend Deca';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 17.976px;
-        line-height: 22px;
-        text-align: center;
-        color: #52B6FF;
-    }
-    div:nth-child(2){
-        position: fixed;
-        width: 90px;
-        height: 90px;
-        bottom: 0px;
-        left: calc(50% - 45px);
     }
 `

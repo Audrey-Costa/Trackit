@@ -11,9 +11,13 @@ import History from "./History";
 export default function App(){
     const [user, setUser] = useState("")
     const [arrayTasks, setArrayTasks] = useState([])
+    const [percentage, setPercentage] = useState(0)
+    const [doneTasks, setDoneTasks] = useState(0)
+    const [totalTasks, setTotalTasks] = useState(1)
+
     return (
         <UserContext.Provider value={{user, setUser}}>
-            <TasksContext.Provider value={{arrayTasks, setArrayTasks}}>
+            <TasksContext.Provider value={{arrayTasks, setArrayTasks, percentage, setPercentage, doneTasks, setDoneTasks, totalTasks, setTotalTasks}}>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Login/>}/>

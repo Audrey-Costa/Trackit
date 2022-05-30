@@ -34,7 +34,7 @@ export default function Register(){
     
 
     return (
-        <>
+        <Container>
             <IMG src={Logo} alt="Logo Trackit" />
             <form onSubmit={register}>
                 <Input formData={formData.email} inputChange={inputChange} inputName={"email"} placeholder={"email"}/>
@@ -44,9 +44,20 @@ export default function Register(){
                 <Button type={'submit'}>Cadastrar</Button>
             </form> 
             <Link style={{textDecoration: "none", color: "#52B6FF"}} to={"/"}><h1>Já tem uma conta? Faça login!</h1></Link>
-        </>
+        </Container>
     )
 }
+
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: #FFFFFF;
+`
 
 const IMG = styled.img`
     margin-top: 68px;

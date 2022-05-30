@@ -1,26 +1,17 @@
 import styled from "styled-components"
 import { useContext } from "react"
 import UserContext from "../Context/UserContext"
+import Day from "./Day"
 
 export default function TasksWeek({taskName, days, taskDelete, taskId}){
-    const {user} = useContext(UserContext)
-   /*  function day(){
-        if (days)
-    } */
-    
-
+    console.log(days, taskId, taskName)
+    const week = ['D','S','T','Q','Q','S','S']
     return (
         <Container>
             <div><h3>{taskName}</h3></div>
             <ion-icon name="trash-outline" onClick={taskDelete}></ion-icon>
             <div>
-                <button value={0}>D</button>
-                <button value={1}>S</button>
-                <button value={2}>T</button>
-                <button value={3}>Q</button>
-                <button value={4}>Q</button>
-                <button value={5}>S</button>
-                <button value={6}>S</button>
+                {days ? week.map((element)=><Day key={element.index} index={element.index} days={days}>{element}</Day>) : ""}
             </div>
         </Container>
     )

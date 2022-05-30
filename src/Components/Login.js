@@ -34,7 +34,7 @@ export default function Login(){
     }
 
     return (
-        <>
+        <Container>
             <IMG src={Logo} alt="Logo Trackit" />
             <form onSubmit={login}>
                 <Input formData={formData.email} inputName={"email"} inputChange={inputChange} placeholder={"email"}/>
@@ -42,9 +42,19 @@ export default function Login(){
                 <Button type={'submit'}>Entrar</Button>
             </form>
             <Link style={{textDecoration: "none", color: "#52B6FF"}} to={`/cadastro`}><h1>Não tem uma conta? Cadastre-se!</h1></Link>
-        </>
+        </Container>
     )
 }
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: #FFFFFF;
+`
 
 const IMG = styled.img`
     margin-top: 68px;

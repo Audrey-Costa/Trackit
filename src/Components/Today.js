@@ -1,18 +1,30 @@
 import { useState, useEffect, useContext } from "react"
 import styled from 'styled-components'
-import Image from '../Images/UserImage.png'
-import { Link } from 'react-router-dom'
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar"
 import axios from "axios"
 import 'react-circular-progressbar/dist/styles.css'
 import TasksToday from './TasksToday'
 import TasksContext from "../Context/TasksContext"
 import UserContext from "../Context/UserContext"
+import Footer from "./Footer"
+import dayjs from "dayjs"
 
 export default function Today(){
     const {user} = useContext(UserContext);
-    const {arrayTasks, setArrayTasks} = useContext(TasksContext)
-    /* const [taskConclude, setTaskConclude] = useState(false) */
+    const {arrayTasks, setArrayTasks, percentage, setPercentage, doneTasks, setDoneTasks, totalTasks, setTotalTasks} = useContext(TasksContext)
+
+    function getDay() {
+        const daysWeek = [
+          'Domingo',
+          'Segunda',
+          'Terça',
+          'Quarta',
+          'Quinta',
+          'Sexta',
+          'Sábado'
+        ];
+    
+        return `${daysWeek[dayjs().day()]}, ${dayjs().format('DD/MM')}`;
+      }
 
     useEffect(()=>{
         const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", {
@@ -24,6 +36,11 @@ export default function Today(){
         promise.then(response => {
             const { data } = response;
             setArrayTasks(data)
+            setTotalTasks(data.length)
+            const auxArr = data.filter((element) => element.done === true)
+            setDoneTasks(auxArr.length)
+            setPercentage(doneTasks/totalTasks * 100)
+            console.log(percentage)
         });
 
         promise.catch(error => {alert(error.response.statusText)});
@@ -39,7 +56,9 @@ export default function Today(){
             })
             console.log("feito")
 
-            taskDonePromise.then()
+            taskDonePromise.then(
+                setDoneTasks(doneTasks + 1)
+            )
             taskDonePromise.catch(error => {console.log(error.response.statusText)})
         }else{
             const taskUndonePromise = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`, {} ,{headers: {
@@ -47,30 +66,25 @@ export default function Today(){
             })
             console.log("desfeito")
 
-            taskUndonePromise.then()
+            taskUndonePromise.then(setDoneTasks(doneTasks - 1))
             taskUndonePromise.catch(error => {console.log(error.response.statusText)})
         }
     }
 
-    const percentage = 91;
     return(
         <Container>
             <Header>
                 <h1>TrackIt</h1>
-                <img src={Image} alt="User" />
+                <img src={user.image} alt="User" />
             </Header>
             <SubHeader>
                 <h2>Domingo, 29/05</h2>
                 <p>91% dos hábitos concluídos</p>
             </SubHeader>
             <Main>
-                {arrayTasks.length === 0 ? <p>Você não tem hábito cadastrado para hoje.</p> : (arrayTasks.map(element => <TasksToday key={element.id} taskName={element.name} taskMark={() => taskDone(element.id, element.done)}/>))}
+                {arrayTasks.length === 0 ? <p>Você não tem hábito cadastrado para hoje.</p> : (arrayTasks.map(element => <TasksToday key={element.id} taskName={element.name} currentSequence={element.currentSequence} highestSequence={element.highestSequence} taskDone={element.done}taskMark={() => taskDone(element.id, element.done)}/>))}
             </Main>
-            <Footer>
-                <Link style={{textDecoration: 'none'}} to={`/habitos`}><div>Hábitos</div></Link>
-                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={percentage} text={`Hoje`} background={true} backgroundPadding={6} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
-                <Link style={{textDecoration:'none'}} to={`/historico`}><div>Histórico</div></Link>
-            </Footer>
+            <Footer percentage={percentage}/>
         </Container>
     )
 }
@@ -141,38 +155,4 @@ const Main = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-`
-
-const Footer = styled.div`
-    position: fixed;
-    left: 0px;
-    bottom: 0px;
-    width: 100%;
-    height: 70px;
-    background: #FFFFFF;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    div:nth-child(2n+1){
-        width: 80px;
-        height: 40px;
-        margin: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Lexend Deca';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 17.976px;
-        line-height: 22px;
-        text-align: center;
-        color: #52B6FF;
-    }
-    div:nth-child(2){
-        position: fixed;
-        width: 90px;
-        height: 90px;
-        bottom: 0px;
-        left: calc(50% - 45px);
-    }
 `

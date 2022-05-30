@@ -1,15 +1,15 @@
 import styled from "styled-components"
 
-export default function TasksToday({taskName, taskMark}){
+export default function TasksToday({taskName, currentSequence, highestSequence, taskDone, taskMark}){
     return (
         <Container>
             <div>
                 <h2>{taskName}</h2>
                 {/* implementar lógica de dias */}
-                <h3>Sequência atual: <strong>4 dias</strong></h3>
-                <h3>Seu recorde: <strong>5 dias</strong></h3>
+                <h3>Sequência atual: <strong>{currentSequence} {currentSequence===1 ? "dia":"dias"}</strong></h3>
+                <h3>Seu recorde: <strong>{highestSequence} {highestSequence===1 ? "dia":"dias"}</strong></h3>
             </div>
-            <div onClick={taskMark}>
+            <div onClick={taskMark} style={taskDone ? {backgroundColor: '#8FC549'} :{backgroundColor: '#E5E5E5'}}>
                 <div></div>
                 <div></div>
             </div>
@@ -59,8 +59,7 @@ position: relative;
         right: 20px;
         width: 70px;
         height: 70px;
-        border-radius: 5px;
-        background-color: #8FC549;
+        border-radius: 5px;;
     }
 
     div:last-child div:first-child{

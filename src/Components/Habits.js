@@ -1,23 +1,22 @@
 import { useState, useEffect, useContext } from "react"
 import styled from "styled-components"
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar"
 import 'react-circular-progressbar/dist/styles.css'
 import axios from "axios"
-import { Link } from "react-router-dom";
 import Input from "./Input";
 import Button from "./Button";
 import TasksWeek from "./TasksWeek";
 import UserContext from "../Context/UserContext"
 import TasksContext from "../Context/TasksContext"
+import Footer from "./Footer";
 
 export default function Habits(){
     const {user} = useContext(UserContext);
-    const {arrayTasks, setArrayTasks} = useContext(TasksContext)
+    const {arrayTasks, setArrayTasks, percentage, setPercentage, totalTasks, setTotalTasks, doneTasks} = useContext(TasksContext)
     const [creatTask, setCreatTask] = useState(false)
     const [taskFormData, setTaskFormData] = useState({
         name: '',
         days: []
-    })  
+    })
 
     useEffect(()=>{
         const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {
@@ -29,6 +28,7 @@ export default function Habits(){
         promise.then(response => {
             const { data } = response;
             setArrayTasks(data)
+            setPercentage(doneTasks/totalTasks * 100)
         });
 
         promise.catch(error => {alert(error.response.statusText)});
@@ -49,6 +49,7 @@ export default function Habits(){
         taskPromise.then(response => {
             console.log(response.data)
             setCreatTask(!creatTask)
+            setTotalTasks(totalTasks + 1)
         })
 
         taskPromise.catch(error => console.log(error.response.statusText))
@@ -59,26 +60,30 @@ export default function Habits(){
             Authorization: `Bearer ${user.token}`}
         }
         )
+
+        promise.then(
+            setTotalTasks(totalTasks - 1)
+        )
     }
 
     function inputChange(e){
+        e.preventDefault();
         setTaskFormData({...taskFormData, name: e.target.value});
     }
 
     function dayTask(e){
         e.preventDefault();
+        const auxArr = [...taskFormData.days]
         if(!taskFormData.days.includes(e.target.value)){
             setTaskFormData({...taskFormData, days: [...taskFormData.days, e.target.value]})
         }else{
-            const auxArr = [...taskFormData.days]
             const index = auxArr.indexOf(e.target.value);
             auxArr.splice(index, 1);
             setTaskFormData({...taskFormData, days: auxArr})
         }
-        console.log(e.target.value, taskFormData.days)
+        console.log(e.target.value, auxArr)
     }
 
-    const percentage = 34;
     return (
         <Container>
             <Header>
@@ -97,13 +102,13 @@ export default function Habits(){
                     <form onSubmit={taskSaver}>
                         <Input formData={taskFormData.name} inputName={"nameTask"} inputChange={inputChange} placeholder={"nome do hábito"}/>
                         <div>
-                            <button value={0} onClick={dayTask}>D</button>
-                            <button value={1} onClick={dayTask}>S</button>
-                            <button value={2} onClick={dayTask}>T</button>
-                            <button value={3} onClick={dayTask}>Q</button>
-                            <button value={4} onClick={dayTask}>Q</button>
-                            <button value={5} onClick={dayTask}>S</button>
-                            <button value={6} onClick={dayTask}>S</button>
+                            <button value={0} style={taskFormData.days.includes('0') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>D</button>
+                            <button value={1} style={taskFormData.days.includes('1') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>S</button>
+                            <button value={2} style={taskFormData.days.includes('2') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>T</button>
+                            <button value={3} style={taskFormData.days.includes('3') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>Q</button>
+                            <button value={4} style={taskFormData.days.includes('4') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>Q</button>
+                            <button value={5} style={taskFormData.days.includes('5') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>S</button>
+                            <button value={6} style={taskFormData.days.includes('6') ? {backgroundColor: '#D5D5D5', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#D5D5D5'}} onClick={dayTask}>S</button>
                         </div>   
                         <div>
                             <Button onClick={taskCreator}>Cancelar</Button>
@@ -114,11 +119,7 @@ export default function Habits(){
                 {arrayTasks.length !== 0 ? (arrayTasks.map(element => <TasksWeek key={element.id} taskName={element.name} days={element.days} taskDelete={() => taskDelete(element.id)} taskId={element.id}/>)):
                 <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>}
             </Main>
-            <Footer>
-                <Link style={{textDecoration: 'none'}} to={`/habitos`}><div>Hábitos</div></Link>
-                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={percentage} text={`Hoje`} background={true} backgroundPadding={6} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
-                <Link style={{textDecoration:'none'}} to={`/historico`}><div>Histórico</div></Link>
-            </Footer>
+            <Footer percentage={percentage}/>
         </Container>
     )
 }
@@ -209,40 +210,6 @@ const Main = styled.div`
     align-items: center;
 `
 
-const Footer = styled.div`
-    position: fixed;
-    left: 0px;
-    bottom: 0px;
-    width: 100%;
-    height: 70px;
-    background: #FFFFFF;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    div:nth-child(2n+1){
-        width: 80px;
-        height: 40px;
-        margin: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Lexend Deca';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 17.976px;
-        line-height: 22px;
-        text-align: center;
-        color: #52B6FF;
-    }
-    div:nth-child(2){
-        position: fixed;
-        width: 90px;
-        height: 90px;
-        bottom: 0px;
-        left: calc(50% - 45px);
-    }
-`
-
 const TaskCreator = styled.div`
     width: 90%;
     height: 180px;
@@ -280,7 +247,6 @@ const TaskCreator = styled.div`
         width: 30px;
         height: 30px;
         margin-right: 2%;
-        background: ${false? '#D5D5D5' :'#FFFFFF'};
         border: 1px solid #D5D5D5;
         border-radius: 5px;
         display: flex;
