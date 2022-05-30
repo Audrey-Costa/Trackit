@@ -1,11 +1,57 @@
+import { useState, useEffect, useContext } from "react"
 import styled from 'styled-components'
 import Image from '../Images/UserImage.png'
 import { Link } from 'react-router-dom'
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar"
+import axios from "axios"
 import 'react-circular-progressbar/dist/styles.css'
 import TasksToday from './TasksToday'
+import TasksContext from "../Context/TasksContext"
+import UserContext from "../Context/UserContext"
 
 export default function Today(){
+    const {user} = useContext(UserContext);
+    const {arrayTasks, setArrayTasks} = useContext(TasksContext)
+    /* const [taskConclude, setTaskConclude] = useState(false) */
+
+    useEffect(()=>{
+        const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", {
+            headers: {
+                Authorization: `Bearer ${user.token}`
+            }
+        });
+
+        promise.then(response => {
+            const { data } = response;
+            setArrayTasks(data)
+        });
+
+        promise.catch(error => {alert(error.response.statusText)});
+            
+    },[taskDone])
+
+    function taskDone(id, done){ 
+        console.log(done)
+        if(!done){
+            const taskDonePromise = axios.post(`
+            https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`, {} ,{headers: {
+                Authorization: `Bearer ${user.token}`}
+            })
+            console.log("feito")
+
+            taskDonePromise.then()
+            taskDonePromise.catch(error => {console.log(error.response.statusText)})
+        }else{
+            const taskUndonePromise = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`, {} ,{headers: {
+                Authorization: `Bearer ${user.token}`}
+            })
+            console.log("desfeito")
+
+            taskUndonePromise.then()
+            taskUndonePromise.catch(error => {console.log(error.response.statusText)})
+        }
+    }
+
     const percentage = 91;
     return(
         <Container>
@@ -17,10 +63,12 @@ export default function Today(){
                 <h2>Domingo, 29/05</h2>
                 <p>91% dos hábitos concluídos</p>
             </SubHeader>
-            <TasksToday/>
+            <Main>
+                {arrayTasks.length === 0 ? <p>Você não tem hábito cadastrado para hoje.</p> : (arrayTasks.map(element => <TasksToday key={element.id} taskName={element.name} taskMark={() => taskDone(element.id, element.done)}/>))}
+            </Main>
             <Footer>
                 <Link style={{textDecoration: 'none'}} to={`/habitos`}><div>Hábitos</div></Link>
-                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={percentage} text={`Hoje`} background={true} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
+                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={percentage} text={`Hoje`} background={true} backgroundPadding={6} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
                 <Link style={{textDecoration:'none'}} to={`/historico`}><div>Histórico</div></Link>
             </Footer>
         </Container>
@@ -29,7 +77,7 @@ export default function Today(){
 
 const Container = styled.div`
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     background: #E5E5E5;
     display: flex;
     flex-direction: column;
@@ -85,6 +133,16 @@ const SubHeader = styled.span`
         color: #8FC549; 
     }
 `
+
+const Main = styled.div`
+    width: 100%;
+    margin-bottom: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`
+
 const Footer = styled.div`
     position: fixed;
     left: 0px;

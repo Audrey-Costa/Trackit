@@ -1,14 +1,15 @@
 import styled from "styled-components"
 
-export default function TasksToday(){
+export default function TasksToday({taskName, taskMark}){
     return (
         <Container>
             <div>
-                <h2>Ler 1 Capítulo de livro</h2>
+                <h2>{taskName}</h2>
+                {/* implementar lógica de dias */}
                 <h3>Sequência atual: <strong>4 dias</strong></h3>
                 <h3>Seu recorde: <strong>5 dias</strong></h3>
             </div>
-            <div>
+            <div onClick={taskMark}>
                 <div></div>
                 <div></div>
             </div>
@@ -17,13 +18,19 @@ export default function TasksToday(){
 }
 
 const Container = styled.div`
+position: relative;
     width: 90%;
     height: 90px;
+    margin-bottom: 20px;
     background: #FFFFFF;
     border-radius: 5px;
     display: flex;
-    justify-content: space-around;
+    justify-content: start;
     align-items: center;
+
+    > div:first-child{
+        margin-left: 20px;    
+    }
 
     div:first-child h2{
         font-family: 'Lexend Deca';
@@ -48,7 +55,8 @@ const Container = styled.div`
     }
 
     div:last-child{
-        position: relative;
+        position: absolute;
+        right: 20px;
         width: 70px;
         height: 70px;
         border-radius: 5px;

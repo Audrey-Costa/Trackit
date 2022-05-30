@@ -20,9 +20,9 @@ export default function Login(){
         e.preventDefault();
         const promise = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login', {...formData});
 
-        promise.then(response => {console.log(response.data);
-        navigate('/habitos');
-        setUser(response.data);
+        promise.then(response => {
+            setUser(response.data);
+            navigate('/hoje');
         });
         promise.catch(error=> {console.log(error.response);
         alert("Email ou senha incorretos!");
@@ -39,7 +39,7 @@ export default function Login(){
             <form onSubmit={login}>
                 <Input formData={formData.email} inputName={"email"} inputChange={inputChange} placeholder={"email"}/>
                 <Input formData={formData.password} inputName={"password"} inputChange={inputChange} placeholder={"senha"}/>
-                <Button>Entrar</Button>
+                <Button type={'submit'}>Entrar</Button>
             </form>
             <Link style={{textDecoration: "none", color: "#52B6FF"}} to={`/cadastro`}><h1>Não tem uma conta? Cadastre-se!</h1></Link>
         </>

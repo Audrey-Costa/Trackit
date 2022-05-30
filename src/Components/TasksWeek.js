@@ -1,18 +1,26 @@
 import styled from "styled-components"
+import { useContext } from "react"
+import UserContext from "../Context/UserContext"
 
-export default function TasksWeek(){
+export default function TasksWeek({taskName, days, taskDelete, taskId}){
+    const {user} = useContext(UserContext)
+   /*  function day(){
+        if (days)
+    } */
+    
+
     return (
         <Container>
-            <div><h3>Ler 1 capítulo de livro</h3></div>
-            <ion-icon name="trash-outline"></ion-icon>
+            <div><h3>{taskName}</h3></div>
+            <ion-icon name="trash-outline" onClick={taskDelete}></ion-icon>
             <div>
-                <div>D</div>
-                <div>S</div>
-                <div>T</div>
-                <div>Q</div>
-                <div>Q</div>
-                <div>S</div>
-                <div>S</div>
+                <button value={0}>D</button>
+                <button value={1}>S</button>
+                <button value={2}>T</button>
+                <button value={3}>Q</button>
+                <button value={4}>Q</button>
+                <button value={5}>S</button>
+                <button value={6}>S</button>
             </div>
         </Container>
     )
@@ -25,7 +33,7 @@ const Container = styled.div`
     margin-bottom: 20px;
     padding-left: 20px;
     box-sizing: border-box;
-    background-color: #FFFFFF;
+    background-color: ${'#FFFFFF'};
     border-radius: 5px;
     display: flex;
     flex-direction: column;
@@ -42,6 +50,7 @@ const Container = styled.div`
         top: 0px;
         right: 0px;
         margin: 10px;
+        font-size: 25px;
     }
 
     div:last-child{
@@ -50,7 +59,7 @@ const Container = styled.div`
         justify-content: start;
     }
 
-    div:last-child > div{
+    div:last-child > button{
         width: 30px;
         height: 30px;
         margin-right: 2%;
