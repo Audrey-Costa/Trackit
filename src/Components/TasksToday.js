@@ -1,8 +1,8 @@
 import styled from "styled-components"
 
-export default function TasksToday({taskName, currentSequence, highestSequence, taskDone, taskMark}){
+export default function TasksToday({style, taskName, currentSequence, highestSequence, taskDone, taskMark}){
     return (
-        <Container>
+        <Container style={style}>
             <div>
                 <h2>{taskName}</h2>
                 <h3>Sequência atual: <strong>{currentSequence} {currentSequence===1 ? "dia":"dias"}</strong></h3>

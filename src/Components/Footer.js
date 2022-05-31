@@ -6,7 +6,7 @@ export default function Footer({percentage}){
     return (
         <FooterProgress>
                 <Link style={{textDecoration: 'none'}} to={`/habitos`}><div>Hábitos</div></Link>
-                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={Math.floor(percentage)} text={"Hoje"} background={true} backgroundPadding={6} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
+                <Link style={{textDecoration: 'none'}} to={'/hoje'}><div><CircularProgressbar value={Math.floor(percentage) + 0.2} text={"Hoje"} background={true} backgroundPadding={6} styles={buildStyles({ strokeLinecap: 'round', textColor:'#FFFFFF', backgroundColor:'#52B6FF', trailColor: '#52B6FF', pathColor: '#FFFFFF'})}/></div></Link>
                 <Link style={{textDecoration:'none'}} to={`/historico`}><div>Histórico</div></Link>
         </FooterProgress>
     )
@@ -41,7 +41,6 @@ const FooterProgress = styled.div`
         position: fixed;
         width: 90px;
         height: 90px;
-        bottom: 0px;
         left: calc(50% - 45px);
     }
 `

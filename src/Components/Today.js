@@ -7,11 +7,15 @@ import TasksContext from "../Context/TasksContext"
 import UserContext from "../Context/UserContext"
 import Footer from "./Footer"
 import dayjs from "dayjs"
+import Header from "./Header"
+import Loader from "./Loader"
 
 export default function Today(){
     const {user} = useContext(UserContext);
     const {arrayTasks, setArrayTasks, percentage, setPercentage, doneTasks, setDoneTasks, totalTasks, setTotalTasks} = useContext(TasksContext)
     const [toogle, setToogle] = useState(false)
+    const [ready, setReady] = useState(false)
+
     function getDay() {
         const daysWeek = [
           'Domingo',
@@ -41,6 +45,7 @@ export default function Today(){
             setDoneTasks(auxArr.length)
             setPercentage(doneTasks/totalTasks * 100)
             setToogle(!toogle)
+            setTimeout(() => setReady(true), 200)
         });
 
         promise.catch(error => {console.log(error)});
@@ -74,16 +79,13 @@ export default function Today(){
 
     return(
         <Container>
-            <Header>
-                <h1>TrackIt</h1>
-                <img src={user.image} alt="User" />
-            </Header>
+            <Header src={user.image} name={user.name}/>
             <SubHeader>
                 <h2>{getDay()}</h2>
                 {arrayTasks.length !== 0 ?<p>{Math.floor(percentage)}% dos hábitos concluídos</p> : ""}
             </SubHeader>
             <Main>
-                {arrayTasks.length === 0 ? <p>Você não tem hábito cadastrado para hoje.</p> : (arrayTasks.map(element => <TasksToday key={element.id} taskName={element.name} currentSequence={element.currentSequence} highestSequence={element.highestSequence} taskDone={element.done}taskMark={() => taskDone(element.id, element.done)}/>))}
+                {!ready ? <Loader/> : arrayTasks.length === 0 ? <p>Você não tem hábito cadastrado para hoje.</p> : (arrayTasks.map(element => <TasksToday style={ready ? {display: 'inherit'} : {display: 'none'}} key={element.id} taskName={element.name} currentSequence={element.currentSequence} highestSequence={element.highestSequence} taskDone={element.done}taskMark={() => taskDone(element.id, element.done)}/>))}
             </Main>
             <Footer percentage={percentage}/>
         </Container>
@@ -98,39 +100,6 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: start;
     align-items: center;
-`
-
-const Header = styled.div`
-    width: 100%;
-    height: 70px;
-    position: fixed;
-    z-index: 1;
-    left: 0px;
-    top: 0px;
-    background: #126BA5;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-
-    h1{
-        font-family: 'Playball';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 38.982px;
-        line-height: 49px;
-        color: #FFFFFF;
-    }
-
-    img{
-        width: 50px;
-        height: 50px;
-        background: url(image.png);
-        border-radius: 100px;
-        margin-right:10px;
-    }
 `
 
 const SubHeader = styled.span`

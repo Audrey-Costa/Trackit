@@ -8,6 +8,8 @@ import TasksWeek from "./TasksWeek";
 import UserContext from "../Context/UserContext"
 import TasksContext from "../Context/TasksContext"
 import Footer from "./Footer";
+import Header from "./Header";
+import Loader from "./Loader"
 
 export default function Habits(){
     const {user} = useContext(UserContext);
@@ -18,6 +20,8 @@ export default function Habits(){
         days: []
     })
     const [toogle, setToogle] = useState(false)
+    const [ready, setReady] = useState(false)
+
     useEffect(()=>{
         const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {
             headers: {
@@ -29,6 +33,7 @@ export default function Habits(){
             const { data } = response;
             setArrayTasks(data)
             setPercentage(doneTasks/totalTasks * 100)
+            setTimeout(() => setReady(true), 200)
         });
         promise.catch(error => {alert(error.response.statusText)});
             
@@ -87,10 +92,7 @@ export default function Habits(){
 
     return (
         <Container>
-            <Header>
-                <h1>TrackIt</h1>
-                <img src={user.image} alt="User" />
-            </Header>
+            <Header src={user.image} name={user.name}/>
             <SubHeader>
                 <h2>Meus hábitos</h2>
                 {creatTask ? "" : <PlusTask onClick={taskCreator}>
@@ -117,7 +119,7 @@ export default function Habits(){
                         </div>
                     </form>
                 </TaskCreator> : ""}
-                {arrayTasks.length !== 0 ? (arrayTasks.map(element => <TasksWeek key={element.id} taskName={element.name} days={element.days} taskDelete={() => taskDelete(element.id, element.done)} taskId={element.id}/>)):
+                {!ready ? <Loader/> : arrayTasks.length !== 0 ? (arrayTasks.map(element => <TasksWeek style={ready ? {display: 'inherit'} : {display: 'none'}} key={element.id} taskName={element.name} days={element.days} taskDelete={() => taskDelete(element.id, element.done)} taskId={element.id}/>)):
                 <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>}
             </Main>
             <Footer percentage={percentage}/>
@@ -136,42 +138,9 @@ const Container = styled.div`
     
 `
 
-const Header = styled.div`
-    width: 100%;
-    height: 70px;
-    position: fixed;
-    z-index: 1;
-    left: 0px;
-    top: 0px;
-    background: #126BA5;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-
-    h1{
-        font-family: 'Playball';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 38.982px;
-        line-height: 49px;
-        color: #FFFFFF;
-    }
-
-    img{
-        width: 50px;
-        height: 50px;
-        background: url(image.png);
-        border-radius: 100px;
-        margin-right:10px;
-    }
-`
-
 const SubHeader = styled.span`
     margin-top: 90px;
-    margin-bottom: 30px; 
+    margin-bottom: 45px; 
     padding: 0px 10px;
     width: 100%;
     display: flex;

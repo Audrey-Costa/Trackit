@@ -1,12 +1,10 @@
 import styled from "styled-components"
-import { useContext } from "react"
-import UserContext from "../Context/UserContext"
 import Day from "./Day"
 
-export default function TasksWeek({taskName, days, taskDelete}){
+export default function TasksWeek({taskName, days, taskDelete, style}){
     const week = ['D','S','T','Q','Q','S','S']
     return (
-        <Container>
+        <Container style={style}>
             <div><h3>{taskName}</h3></div>
             <ion-icon name="trash-outline" onClick={taskDelete}></ion-icon>
             <div>
