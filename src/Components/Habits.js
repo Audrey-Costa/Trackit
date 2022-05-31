@@ -11,13 +11,13 @@ import Footer from "./Footer";
 
 export default function Habits(){
     const {user} = useContext(UserContext);
-    const {arrayTasks, setArrayTasks, percentage, setPercentage, totalTasks, setTotalTasks, doneTasks} = useContext(TasksContext)
+    const {arrayTasks, setArrayTasks, percentage, setPercentage, totalTasks, setTotalTasks, doneTasks, setDoneTasks} = useContext(TasksContext)
     const [creatTask, setCreatTask] = useState(false)
     const [taskFormData, setTaskFormData] = useState({
         name: '',
         days: []
     })
-
+    const [toogle, setToogle] = useState(false)
     useEffect(()=>{
         const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {
             headers: {
@@ -30,10 +30,9 @@ export default function Habits(){
             setArrayTasks(data)
             setPercentage(doneTasks/totalTasks * 100)
         });
-
         promise.catch(error => {alert(error.response.statusText)});
             
-    },[taskSaver, taskDelete])
+    },[toogle])
 
     function taskCreator(){
         setCreatTask(!creatTask)
@@ -41,28 +40,31 @@ export default function Habits(){
 
     function taskSaver(e){
         e.preventDefault();
-        console.log(taskFormData)
         const taskPromise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {...taskFormData}, {headers: {
             Authorization: `Bearer ${user.token}`
         }})
 
         taskPromise.then(response => {
-            console.log(response.data)
             setCreatTask(!creatTask)
             setTotalTasks(totalTasks + 1)
+            setToogle(!toogle)
         })
 
         taskPromise.catch(error => console.log(error.response.statusText))
     }
 
-    function taskDelete(taskId){
+    function taskDelete(taskId, taskDone){
+        if(taskDone){
+            setDoneTasks(doneTasks - 1)
+        }
         const promise = axios.delete(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${taskId}`, {headers: {
             Authorization: `Bearer ${user.token}`}
         }
         )
 
-        promise.then(
-            setTotalTasks(totalTasks - 1)
+        promise.then((response)=>{
+            setToogle(!toogle)
+            setTotalTasks(totalTasks - 1)}
         )
     }
 
@@ -81,7 +83,6 @@ export default function Habits(){
             auxArr.splice(index, 1);
             setTaskFormData({...taskFormData, days: auxArr})
         }
-        console.log(e.target.value, auxArr)
     }
 
     return (
@@ -116,7 +117,7 @@ export default function Habits(){
                         </div>
                     </form>
                 </TaskCreator> : ""}
-                {arrayTasks.length !== 0 ? (arrayTasks.map(element => <TasksWeek key={element.id} taskName={element.name} days={element.days} taskDelete={() => taskDelete(element.id)} taskId={element.id}/>)):
+                {arrayTasks.length !== 0 ? (arrayTasks.map(element => <TasksWeek key={element.id} taskName={element.name} days={element.days} taskDelete={() => taskDelete(element.id, element.done)} taskId={element.id}/>)):
                 <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>}
             </Main>
             <Footer percentage={percentage}/>

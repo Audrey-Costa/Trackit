@@ -5,7 +5,6 @@ export default function TasksToday({taskName, currentSequence, highestSequence, 
         <Container>
             <div>
                 <h2>{taskName}</h2>
-                {/* implementar lógica de dias */}
                 <h3>Sequência atual: <strong>{currentSequence} {currentSequence===1 ? "dia":"dias"}</strong></h3>
                 <h3>Seu recorde: <strong>{highestSequence} {highestSequence===1 ? "dia":"dias"}</strong></h3>
             </div>

@@ -3,15 +3,14 @@ import { useContext } from "react"
 import UserContext from "../Context/UserContext"
 import Day from "./Day"
 
-export default function TasksWeek({taskName, days, taskDelete, taskId}){
-    console.log(days, taskId, taskName)
+export default function TasksWeek({taskName, days, taskDelete}){
     const week = ['D','S','T','Q','Q','S','S']
     return (
         <Container>
             <div><h3>{taskName}</h3></div>
             <ion-icon name="trash-outline" onClick={taskDelete}></ion-icon>
             <div>
-                {days ? week.map((element)=><Day key={element.index} index={element.index} days={days}>{element}</Day>) : ""}
+                {days ? week.map((element, index)=><Day key={index} index={index} days={days}>{element}</Day>) : ""}
             </div>
         </Container>
     )
@@ -31,7 +30,7 @@ const Container = styled.div`
     justify-content: center;
     align-items: flex-start;
 
-    div:first-child{
+    > div:first-child{
         width: 65%;
         margin-bottom: 10px;
     }
@@ -48,23 +47,5 @@ const Container = styled.div`
         width: 93%;
         display: flex;
         justify-content: start;
-    }
-
-    div:last-child > button{
-        width: 30px;
-        height: 30px;
-        margin-right: 2%;
-        background: #FFFFFF;
-        border: 1px solid #D5D5D5;
-        border-radius: 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Lexend Deca';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 19.976px;
-        line-height: 25px;
-        color: #DBDBDB;
     }
 `

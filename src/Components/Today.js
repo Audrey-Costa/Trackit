@@ -11,7 +11,7 @@ import dayjs from "dayjs"
 export default function Today(){
     const {user} = useContext(UserContext);
     const {arrayTasks, setArrayTasks, percentage, setPercentage, doneTasks, setDoneTasks, totalTasks, setTotalTasks} = useContext(TasksContext)
-
+    const [toogle, setToogle] = useState(false)
     function getDay() {
         const daysWeek = [
           'Domingo',
@@ -40,33 +40,34 @@ export default function Today(){
             const auxArr = data.filter((element) => element.done === true)
             setDoneTasks(auxArr.length)
             setPercentage(doneTasks/totalTasks * 100)
-            console.log(percentage)
+            setToogle(!toogle)
         });
 
-        promise.catch(error => {alert(error.response.statusText)});
+        promise.catch(error => {console.log(error)});
             
-    },[taskDone])
+    },[toogle])
 
     function taskDone(id, done){ 
         console.log(done)
         if(!done){
+            
             const taskDonePromise = axios.post(`
             https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`, {} ,{headers: {
                 Authorization: `Bearer ${user.token}`}
             })
-            console.log("feito")
 
             taskDonePromise.then(
-                setDoneTasks(doneTasks + 1)
+                setDoneTasks(doneTasks + 1),
+                setToogle(!toogle)
             )
             taskDonePromise.catch(error => {console.log(error.response.statusText)})
         }else{
             const taskUndonePromise = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`, {} ,{headers: {
                 Authorization: `Bearer ${user.token}`}
             })
-            console.log("desfeito")
 
-            taskUndonePromise.then(setDoneTasks(doneTasks - 1))
+            taskUndonePromise.then(setDoneTasks(doneTasks - 1),
+            setToogle(!toogle))
             taskUndonePromise.catch(error => {console.log(error.response.statusText)})
         }
     }
@@ -78,8 +79,8 @@ export default function Today(){
                 <img src={user.image} alt="User" />
             </Header>
             <SubHeader>
-                <h2>Domingo, 29/05</h2>
-                <p>91% dos hábitos concluídos</p>
+                <h2>{getDay()}</h2>
+                {arrayTasks.length !== 0 ?<p>{Math.floor(percentage)}% dos hábitos concluídos</p> : ""}
             </SubHeader>
             <Main>
                 {arrayTasks.length === 0 ? <p>Você não tem hábito cadastrado para hoje.</p> : (arrayTasks.map(element => <TasksToday key={element.id} taskName={element.name} currentSequence={element.currentSequence} highestSequence={element.highestSequence} taskDone={element.done}taskMark={() => taskDone(element.id, element.done)}/>))}
